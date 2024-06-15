@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Countdown Timer</title>
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #FFCB0B;
+    }
+
+    .triangle-top-left,
+    .triangle-bottom-right {
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .triangle-top-left {
+      border-left: 50vw solid #00274C;
+      border-bottom: 50vh solid transparent;
+      animation: slideInFromLeft 1s ease-out forwards;
+    }
+
+    .triangle-bottom-right {
+      border-right: 50vw solid #00274C;
+      border-top: 50vh solid transparent;
+      bottom: 0;
+      right: 0;
+      animation: slideInFromRight 1s ease-out forwards;
+    }
+
+    .timer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 200px;
+      font-weight: bold;
+      color: black;
+    }
+
+    .buttons-container {
+      position: absolute;
+      top: 70%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      gap: 40px;
+    }
+
+    .button {
+      width: 180px;
+      height: 75px;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
+      background-color: #00274C;
+      color: white;
+      font-size: 40px;
+      text-align: center;
+      line-height: 60px;
+      cursor: pointer;
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .button:hover {
+      transform: scale(1.1);
+      background-color: #003E78;
+    }
+
+    @keyframes slideInFromLeft {
+      from {
+        transform: translateX(-100%);
+      }
+
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInFromRight {
+      from {
+        transform: translateX(100%);
+      }
+
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .title {
+      position: absolute;
+      top: 18%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 70px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .title span {
+      position: relative;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="triangle-top-left"></div>
+  <div class="triangle-bottom-right"></div>
+
+  <!-- Title Section -->
+  <div class="title" id="title">
+    <span>ENGR1000J-S2</span><br>
+    <span>Phase One Game Day!</span><br>
+    <span>"Mars Explorer"</span>
+  </div>
+
+  <div id="timer" class="timer">10:00</div>
+  <div class="buttons-container">
+    <button class="button" id="startButton">START</button>
+    <button class="button" id="resetButton">RESET</button>
+  </div>
+
+  <script>
+    function getColorAtPoint(x, y) {
+      const canvas = document.createElement('canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      const ctx = canvas.getContext('2d');
+
+      ctx.fillStyle = '#FFCB0B';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = '#00274C';
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(canvas.width / 2, 0);
+      ctx.lineTo(0, canvas.height / 2);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.moveTo(canvas.width, canvas.height);
+      ctx.lineTo(canvas.width / 2, canvas.height);
+      ctx.lineTo(canvas.width, canvas.height / 2);
+      ctx.closePath();
+      ctx.fill();
+
+      const imageData = ctx.getImageData(x, y, 1, 1).data;
+      return `rgb(${imageData[0]}, ${imageData[1]}, ${imageData[2]})`;
+    }
+
+    function updateTitleColors() {
+      const title = document.getElementById('title');
+      const spans = title.getElementsByTagName('span');
+
+      for (const span of spans) {
+        const rect = span.getBoundingClientRect();
+        for (let i = 0; i < span.textContent.length; i++) {
+          const char = span.textContent[i];
+          const spanRect = span.getBoundingClientRect();
+          const x = spanRect.left + (spanRect.width / span.textContent.length) * i;
+          const y = spanRect.top + (spanRect.height / 2);
+
+          const color = getColorAtPoint(x, y);
+          const newSpan = document.createElement('span');
+          newSpan.textContent = char;
+          newSpan.style.color = (color === 'rgb(0, 39, 76)') ? '#fcd23b' : '#00203D';
+          span.parentNode.insertBefore(newSpan, span);
+        }
+        span.remove();
+      }
+    }
+
+    window.addEventListener('load', updateTitleColors);
+    window.addEventListener('resize', updateTitleColors);
+  </script>
+</body>
+
+</html>
