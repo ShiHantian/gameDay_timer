@@ -140,6 +140,40 @@
   </div>
 
   <script>
+    let timer;
+    let isRunning = false;
+    const timerElement = document.getElementById('timer');
+    const startButton = document.getElementById('startButton');
+    const resetButton = document.getElementById('resetButton');
+
+    startButton.addEventListener('click', () => {
+      if (!isRunning) {
+        let timeLeft = 10 * 60; // 10 minutes in seconds
+        isRunning = true;
+        timerElement.style.color = 'black';
+
+        timer = setInterval(() => {
+          const minutes = Math.floor(timeLeft / 60);
+          const seconds = timeLeft % 60;
+          timerElement.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+          timeLeft--;
+
+          if (timeLeft < 0) {
+            clearInterval(timer);
+            timerElement.style.color = 'red';
+            isRunning = false;
+          }
+        }, 1000);
+      }
+    });
+
+    resetButton.addEventListener('click', () => {
+      clearInterval(timer);
+      timerElement.textContent = '10:00';
+      timerElement.style.color = 'black';
+      isRunning = false;
+    });
+    
     function getColorAtPoint(x, y) {
       const canvas = document.createElement('canvas');
       canvas.width = window.innerWidth;
